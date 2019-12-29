@@ -28,8 +28,9 @@ GitHub:[点击预览——极客浪漫红包表白程序](https://github.com/ben
 - 【君子之交-淡如水】解放双手，配置红包
   - 手动单个配置
   - 自动多个配置红包金额【limit类限制金额范围】
-  - 生成环境开发环境划分
-  - 小结
+- 生成环境开发环境划分
+
+- 小结
 - 【人生若只如初见】从“程序”入口Controller开始
   - controller+thymeleaf（不推荐，前后端不分离）
   - 恢复访问@Controller+@ResponseBody
