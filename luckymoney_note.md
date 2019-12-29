@@ -173,3 +173,139 @@ public class HelloController {
 4. 输出：mixMoney1说明最少要发1元
 5. Git上传到分支confmoney
 
+```
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git branch
+* master
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git checkout -b confmoney
+M	luckymoney/src/main/java/com/bennyrhys/luckymoney/HelloController.java
+M	luckymoney/src/main/resources/application.yml
+M	luckymoney_note.md
+Switched to a new branch 'confmoney'
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git branch
+* confmoney
+  master
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git status
+On branch confmoney
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   luckymoney/src/main/java/com/bennyrhys/luckymoney/HelloController.java
+	modified:   luckymoney/src/main/resources/application.yml
+	modified:   luckymoney_note.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	.DS_Store
+	luckymoney/.DS_Store
+
+no changes added to commit (use "git add" and/or "git commit -a")
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git add .
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git commit -m "红包金额-手动配置"
+[confmoney bde8c36] 红包金额-手动配置
+ 5 files changed, 59 insertions(+), 5 deletions(-)
+ create mode 100644 .DS_Store
+ create mode 100644 luckymoney/.DS_Store
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git remote -v
+origin	https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git (fetch)
+origin	https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git (push)
+origin_lm	https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git (fetch)
+origin_lm	https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git (push)
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git push origin_lm confmoney
+Enumerating objects: 27, done.
+Counting objects: 100% (27/27), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (11/11), done.
+Writing objects: 100% (15/15), 2.37 KiB | 2.37 MiB/s, done.
+Total 15 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), completed with 2 local objects.
+remote: 
+remote: Create a pull request for 'confmoney' on GitHub by visiting:
+remote:      https://github.com/bennyrhys/LuckyMoney-SpringBootProject/pull/new/confmoney
+remote: 
+To https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git
+ * [new branch]      confmoney -> confmoney
+```
+
+## 自动配置红包金额【limit类限制金额范围】
+
+1. application.yml
+
+```properties
+limit:
+  minMoney: 1
+  maxMoney: 99
+  description: 最少要发${limit.minMoney}元,最多发${limit.maxMoney}元
+```
+
+2. LimitConfig
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+
+@RestController
+public class HelloController {
+
+//法2；自动注入
+    @Autowired
+    LimitConfig limitConfig;
+
+
+    @GetMapping("/hello")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+    }
+}
+```
+
+3. HelloController
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+
+@RestController
+public class HelloController {
+
+//法2；自动注入
+    @Autowired
+    LimitConfig limitConfig;
+
+
+    @GetMapping("/hello")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+    }
+}
+```
+
+4. 输出
+
+http://localhost:8081/luckymoney/hello
+
+说明最少要发1元,最多发99元
+
+5. git提交
+
+```
+
+```
+

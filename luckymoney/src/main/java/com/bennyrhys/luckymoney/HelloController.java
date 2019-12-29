@@ -11,16 +11,14 @@ import java.math.BigDecimal;
 
 @RestController
 public class HelloController {
-//法1：手动引入配置信息
-    @Value("${mixMoney}")
-    private BigDecimal mixMoney;
-    @Value("${description}")
-    private String description;
+
+//法2；自动注入
+    @Autowired
+    LimitConfig limitConfig;
 
 
     @GetMapping("/hello")
-//    @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public  String hello(){
-        return "mixMoney"+mixMoney+"说明"+description;
+        return "说明"+limitConfig.getDescription();
     }
 }
