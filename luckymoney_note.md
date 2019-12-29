@@ -498,6 +498,102 @@ hello world
 5. git上传
 
 ```
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git add .
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git commit -m "controller+thymeleaf"
+[confmoney 0c07f43] controller+thymeleaf
+ 6 files changed, 94 insertions(+), 2 deletions(-)
+ create mode 100644 luckymoney/src/main/resources/templates/index.html
+ create mode 100644 luckymoney_note.assets/image-20191229164307062.png
+ create mode 100644 luckymoney_note.assets/image-20191229164313530.png
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git push origin_lm confmoney
+```
+
+## 恢复访问@Controller+@ResponseBody
+
+注销thymeleaf，新增@RestponseBody恢复页面访问，消除报错
+
+**@RestponseBody使用，当同时两个方法使用，@RestponseBody添加返回字符串，不加返回h5页面**
+
+http://localhost:8081/luckymoney/hello
+
+http://localhost:8081/luckymoney/hello2
+
+
+
+1. pom.xml
 
 ```
+  <!--      <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+-->
+//注销模版使用，记得每次修改meaven要重新import一下
+//@Controller+@ResponseBody=@RestController
+//@ResponseBody可以放在方法上用
+```
+
+2. HelloController//单独合并两个注解功能
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+
+@Controller
+//@ResponseBody
+public class HelloController {
+
+//法2；自动注入
+    @Autowired
+    LimitConfig limitConfig;
+
+    @ResponseBody
+    @GetMapping("/hello")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+//        return "index";
+    }
+}
+```
+
+3. HelloController同时返回 字符串+thymeleaf h5
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+
+@Controller
+//@ResponseBody
+public class HelloController {
+
+//法2；自动注入
+    @Autowired
+    LimitConfig limitConfig;
+
+    @ResponseBody
+    @GetMapping("/hello")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+//        return "index";
+    }
+    @GetMapping("/hello2")
+    public  String hello2(){
+        return "index";
+    }
+}
+```
+
+4. git上传
 
