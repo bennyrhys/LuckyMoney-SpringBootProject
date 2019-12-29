@@ -2,3 +2,7 @@ server:
   port: 8081
   servlet:
     context-path: /luckymoney
+
+mixMoney: 1
+maxMoney: 99
+description: 最少要发${mixMoney}元

@@ -1,3 +1,7 @@
+[TOC]
+
+# 文档说明
+
 ## 版本配置
 
 Jdk1.8.111
@@ -130,7 +134,42 @@ git remote remove origin_lm
 git remote add origin_lm  https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git
 //因为github原有README.md文档需要解决冲突
 git pull origin_lm master
-//
-
-
+//git push origin_lm master
 ```
+
+# 配置红包
+
+## 手动配置
+
+1 .application.yml
+
+```properties
+mixMoney: 1
+maxMoney: 99
+description: 最少要发${mixMoney}元
+```
+
+2 .HelloController
+
+```java
+@RestController
+public class HelloController {
+//法1：手动引入配置信息
+    @Value("${mixMoney}")
+    private BigDecimal mixMoney;
+    @Value("${description}")
+    private String description;
+
+
+    @GetMapping("/hello")
+//    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+    public  String hello(){
+        return "mixMoney"+mixMoney+"说明"+description;
+    }
+}
+```
+
+3. 访问http://localhost:8081/luckymoney/hello
+4. 输出：mixMoney1说明最少要发1元
+5. Git上传到分支confmoney
+
