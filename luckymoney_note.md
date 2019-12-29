@@ -597,3 +597,218 @@ public class HelloController {
 
 4. git上传
 
+```
+git commit -m "@controller+@ResponseBody"
+git push origin_lm confmoney
+```
+
+## 多访问url同返回（名称数组）
+
+快捷键：command+p//查看@GetMapping("/hello")，括号内参数类型
+
+- http://localhost:8081/luckymoney/hi  == http://localhost:8081/luckymoney/hello 不同名访问同返回
+
+```
+@GetMapping({"/hello","/hi"})
+```
+
+## url深层访问：@RequestMapping("hello")
+
+- http://localhost:8081/luckymoney/hello/say url深层访问
+
+低级做法：不方便维护，每次写深路径
+
+```java
+@GetMapping("/hello/say")
+```
+
+高级做法：@RequestMapping("hello")
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+@RequestMapping("hello")
+@RestController
+public class HelloController {
+
+    @Autowired
+    LimitConfig limitConfig;
+
+    @GetMapping("/say")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+    }
+
+}
+```
+
+## post请求访问
+
+​    @PostMapping("/say")
+
+get无法接受请求，使用工具postman发送post请求
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+@RequestMapping("hello")
+@RestController
+public class HelloController {
+
+    @Autowired
+    LimitConfig limitConfig;
+
+//    @GetMapping("/say")
+    @PostMapping("/say")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+    }
+
+}
+```
+
+## Get/post都行的访问
+
+不推荐，请求要明确，都行刷流氓
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+@RequestMapping("hello")
+@RestController
+public class HelloController {
+
+    @Autowired
+    LimitConfig limitConfig;
+
+//    @GetMapping("/say")
+//    @PostMapping("/say")
+    @RequestMapping("/say")
+    public  String hello(){
+        return "说明"+limitConfig.getDescription();
+    }
+
+}
+```
+
+## 获取请求携带的参数
+
+<img src="luckymoney_note.assets/image-20191229173946637.png" alt="image-20191229173946637" style="zoom:33%;" />
+
+
+
+- url-简洁hello/say/100
+
+@PathVariable("id") +@GetMapping("/say/{id}")
+
+HelloController
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+@RequestMapping("hello")
+@RestController
+public class HelloController {
+
+    @Autowired
+    LimitConfig limitConfig;
+
+    @GetMapping("/say/{id}")
+    public  String hello(@PathVariable("id") Integer id){
+        return "id:"+id;
+    }
+
+}
+```
+
+http://localhost:8081/luckymoney/hello/say/100
+
+id:100
+
+- url-hello/say?id=19
+
+@RequestParam("id"),撤销@GetMapping("/say")的{id}
+
+注意：@RequestParam中id和访问say?id=19名称一致，访问的id不能为空
+
+HelloController
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+@RequestMapping("hello")
+@RestController
+public class HelloController {
+
+    @Autowired
+    LimitConfig limitConfig;
+
+    @GetMapping("/say")
+    public  String hello(@RequestParam("id") Integer id){
+        return "id:"+id;
+    }
+
+}
+```
+
+http://localhost:8081/luckymoney/hello/say?id=19
+
+id:19
+
+- url-hello/say?id=为空时
+
+设置属性非必须属性设置
+
+```
+public  String hello(@RequestParam(value = "id" , required = false, defaultValue = "0") Integer id){
+```
+
+不传id时默认为0
+
+http://localhost:8081/luckymoney/hello/say
+
+id:0
+
+- 访问切换成post请求
+
+请求方式多样，可以跟在url-hello/say?id=后面，也可以在请求体中
+
+推荐参数 放在body的urlencode里面
+
+```java
+@PostMapping("/say")
+```
+
+## git提交
+
+confmoney分支 commit “controller-end”

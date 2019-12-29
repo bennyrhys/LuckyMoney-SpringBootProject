@@ -6,23 +6,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-
-@Controller
-//@ResponseBody
+@RequestMapping("hello")
+@RestController
 public class HelloController {
 
-//法2；自动注入
     @Autowired
     LimitConfig limitConfig;
 
-    @ResponseBody
-    @GetMapping("/hello")
-    public  String hello(){
-        return "说明"+limitConfig.getDescription();
-//        return "index";
+    @PostMapping("/say")
+    public  String hello(@RequestParam(value = "id" , required = false, defaultValue = "0") Integer id){
+        return "id:"+id;
     }
-    @GetMapping("/hello2")
-    public  String hello2(){
-        return "index";
-    }
+
 }
