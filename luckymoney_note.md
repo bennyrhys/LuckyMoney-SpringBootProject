@@ -1,6 +1,6 @@
 [TOC]
 
-# 文档说明
+# 【让宝宝不要输在起跑线】文档说明
 
 ## 版本配置
 
@@ -10,7 +10,7 @@ meaven3.5.4
 
 springboot2.1.3
 
-# hello world
+# 【初识】SpringBoot-hello world
 
 ```java
 package com.bennyrhys.luckymoney;
@@ -137,7 +137,7 @@ git pull origin_lm master
 //git push origin_lm master
 ```
 
-# 配置红包
+# 【君子之交-淡如水】解放双手，配置红包
 
 ## 手动单个配置
 
@@ -435,9 +435,7 @@ bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git push origin_l
 
 多环境配置
 
-# Controller的使用
-
-
+# 【人生若只如初见】从“程序”入口Controller开始
 
 <img src="luckymoney_note.assets/image-20191229164313530.png" alt="image-20191229164313530" style="zoom:50%;" />
 
@@ -812,3 +810,277 @@ id:0
 ## git提交
 
 confmoney分支 commit “controller-end”
+
+# 【收获人生"红颜”知己】撸程序-红包收发操作数据库
+
+## 搭配方案：
+
+java端：spring-data-jpa：持久层配置标准，定义标准好比接口，实现此规范的产品hibernate，toplink，对spring整合，不用写一行sql语句操作
+
+数据库：mysql
+
+## restful-api设计
+
+| 请求类型 | 请求路径       | 请求功能       |
+| -------- | -------------- | -------------- |
+| get      | /luckmoneys    | 获取红包列表   |
+| post     | /luckmoneys    | 创建一个红包   |
+| get      | /luckmoneys/id | 通过id查询红包 |
+| put      | /luckmoneys/id | 通过id更新红包 |
+
+## 引入pom jpa+mysql
+
+```
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+</dependency>
+```
+
+注意：不要加版本号，Springbot已经选择好了版本
+
+## yml配置mysql
+
+先建立数据库luckmoney
+
+```
+server:
+  port: 8081
+  servlet:
+    context-path: /luckymoney
+limit:
+  minMoney: 0.1
+  maxMoney: 99
+  description: 最少要发${limit.minMoney}元,最多发${limit.maxMoney}元
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/luckmoney
+    username: root
+    password: rootroot
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true #控制台显示sql命令
+```
+
+## 数据库-创建表
+
+不需要执行sql
+
+创建java文件命名时首字母大写，**中间不要驼峰命名**，默认识别为一个单词
+
+Luckmoney.java 【空构造方法、get/set、@id导包不要错Java.presistence、id自增】
+
+```java
+package com.bennyrhys.luckymoney;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.math.BigDecimal;
+@Entity
+public class Luckmoney {
+    @Id
+    @GeneratedValue //自增
+    private Integer id;
+    private BigDecimal money;
+    private String producer;//发送方
+    private String consumer;//接收方
+```
+
+运行，自动创建表
+
+> 控制台输出sql
+>
+> Hibernate: drop table if exists hibernate_sequence
+> Hibernate: drop table if exists luckmoney
+> Hibernate: create table hibernate_sequence (next_val bigint) engine=MyISAM
+> Hibernate: insert into hibernate_sequence values ( 1 )
+> Hibernate: create table luckmoney (id integer not null, consumer varchar(255), money decimal(19,2), producer varchar(255), primary key (id)) engine=MyISAM
+
+填充表中数据，并关闭创建表yml配置create->update
+
+```
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true #控制台显示sql命令
+```
+
+## LuckymoneyRepository接口
+
+Repository就是和数据连接的Dao，这样写和jpa命名一致
+
+继承JpaRepository<Luckmoney,Integer>**数据库的实体类，和id的类型**
+
+```
+package com.bennyrhys.luckymoney;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LuckymoneyRepository extends JpaRepository<Luckmoney,Integer> {
+}
+```
+
+## LuckmoneyController
+
+先写好dao接口再调cotroller
+
+```java
+package com.bennyrhys.luckymoney;
+
+import java.util.List;
+
+public class LuckmoneyController {
+    /**
+     * 获取红包列表
+     */
+    public List<Luckmoney> list(){
+
+    }
+}
+```
+
+
+
+ ## 列表输出
+
+```
+get：http://localhost:8081/luckymoney/luckymoneys
+[{"id":1,"money":0.10,"producer":"李四","consumer":"zhangsan"},{"id":2,"money":0.20,"producer":"王五","consumer":"李四"}]
+
+post：http://localhost:8081/luckymoney/luckymoneys
+producer 啊本
+money 10
+{
+    "id": 3,
+    "money": 10,
+    "producer": "啊本",
+    "consumer": null
+}
+
+get：http://localhost:8081/luckymoney/luckymoneys/2
+{
+    "id": 2,
+    "money": 100.00,
+    "producer": "瑞新",
+    "consumer": null
+}
+
+put：http://localhost:8081/luckymoney/luckymoneys/2
+consumer 师姐
+{
+    "id": 2,
+    "money": 1.00,
+    "producer": "阿本",
+    "consumer": "师姐"
+}
+```
+
+# 【搞定并发就在一起】事务就像乱点鸳鸯的丈母娘
+
+数据库事务，要么都完成要么都不做
+
+## LuckymoneyService
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+@Service
+public class LuckymoneyService {
+    @Autowired
+    private LuckymoneyRepository luckymoneyRepository;
+    /**
+     * 创建两个红包
+     */
+    public void createTwo(){
+        Luckmoney luckmoney = new Luckmoney();
+        luckmoney.setProducer("瑞新");
+        luckmoney.setMoney(new BigDecimal("520"));
+
+        luckymoneyRepository.save(luckmoney);
+        Luckmoney luckmoney2 = new Luckmoney();
+        luckmoney2.setProducer("瑞新");
+        luckmoney2.setMoney(new BigDecimal("1314"));
+
+        luckymoneyRepository.save(luckmoney2);
+    }
+}
+```
+
+## LuckmoneyController
+
+```java
+/**
+ * 发两个红包-测试
+ */
+@PostMapping("luckymoneys/two")
+public void creatTwo(){
+    service.createTwo();
+}
+```
+
+## 请求发送红包
+
+http://localhost:8081/luckymoney/luckymoneys/two	状态码返回200
+
+> Hibernate: select next_val as id_val from hibernate_sequence for update
+> Hibernate: update hibernate_sequence set next_val= ? where next_val=?
+> Hibernate: insert into luckmoney (consumer, money, producer, id) values (?, ?, ?, ?)
+> Hibernate: select next_val as id_val from hibernate_sequence for update
+> Hibernate: update hibernate_sequence set next_val= ? where next_val=?
+> Hibernate: insert into luckmoney (consumer, money, producer, id) values (?, ?, ?, ?)
+
+## 配置测试环境
+
+decimal类型的金额，设置长度为五位（则整数为3小数为2）
+
+1314的红包创建报错，数值越界Out of range value for column 'money' at row 1
+
+写入一条520，另一条1314失败，不符合同时发生的事务要求
+
+
+
+## 搞定并发
+
+添加注解@Transactional,选择导入spring那个，先清空数据库，结果520依旧存入，1314失败
+
+- 事务理解：
+  - @注解控制java事务
+  - 有些数据库不支持事务，mysql有自己的事务机制（MYISAM）->(mysql支持多类型修改成innoDB实现事务)
+
+​	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
