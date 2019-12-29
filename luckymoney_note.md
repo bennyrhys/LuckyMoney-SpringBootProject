@@ -139,7 +139,7 @@ git pull origin_lm master
 
 # 配置红包
 
-## 手动配置
+## 手动单个配置
 
 1 .application.yml
 
@@ -228,7 +228,7 @@ To https://github.com/bennyrhys/LuckyMoney-SpringBootProject.git
  * [new branch]      confmoney -> confmoney
 ```
 
-## 自动配置红包金额【limit类限制金额范围】
+## 自动多个配置红包金额【limit类限制金额范围】
 
 1. application.yml
 
@@ -306,6 +306,122 @@ http://localhost:8081/luckymoney/hello
 5. git提交
 
 ```
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git branch
+* confmoney
+  master
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git status
+On branch confmoney
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   luckymoney/src/main/java/com/bennyrhys/luckymoney/LimitConfig.java
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   README.md
+	modified:   luckymoney/src/main/java/com/bennyrhys/luckymoney/HelloController.java
+	modified:   luckymoney/src/main/java/com/bennyrhys/luckymoney/LimitConfig.java
+	modified:   luckymoney/src/main/resources/application.yml
+	modified:   luckymoney_note.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	README.assets/
+
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git add .
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git commit -m "limit类限制金额自动配置"
+```
+
+# 生成环境开发环境划分
+
+1. 思路
+
+> dev开发模式
+>
+> prod生产模式
+>
+> 由yml控制选择模式
+>
+> 
+>
+> 场景
+>
+> dev：测试0.1 元
+>
+> prod：正式1元
+
+
+
+2.  application-dev.yml
+
+```properties
+spring:
+  profiles:
+    active: dev #设定部署的测试配置开发、生产(如果正式上线，可以不修改此处，打包后命令切换环境)
+```
+
+3. application-dev.yml
+
+```properties
+server:
+  port: 8081
+  servlet:
+    context-path: /luckymoney
+limit:
+  minMoney: 0.1
+  maxMoney: 99
+  description: 最少要发${limit.minMoney}元,最多发${limit.maxMoney}元
+```
+
+4. application-prod.yml
+
+```properties
+server:
+  port: 8081
+  servlet:
+    context-path: /luckymoney
+limit:
+  minMoney: 1
+  maxMoney: 99
+  description: 最少要发${limit.minMoney}元,最多发${limit.maxMoney}元
+```
+
+5. 输出
+
+> Dev:说明最少要发0.1元,最多发99元
+>
+> Prod:说明最少要发1元,最多发99元
+
+6. 打包命令切换开发环境
 
 ```
+meaven使用
+//项目根目录打包
+mvn clean package
+//普通启动-开发环境
+java -jar target/luckymoney-0.0.1-SNAPSHOT.jar
+//启动时修改-生产环境
+java -jar -Dspring.profiles.active=prod  target/luckymoney-0.0.1-SNAPSHOT.jar
+```
+
+
+
+6. git上传
+
+```
+
+```
+
+
+
+# 小结
+
+@Value //单个配置
+
+@Component 	@ConfigurationProperties//多个配置
+
+多环境配置
 
