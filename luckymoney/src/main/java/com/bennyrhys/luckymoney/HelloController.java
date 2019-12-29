@@ -2,6 +2,7 @@ package com.bennyrhys.luckymoney;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 
-@RestController
+@Controller
 public class HelloController {
 
 //法2；自动注入
@@ -19,6 +20,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public  String hello(){
-        return "说明"+limitConfig.getDescription();
+//        return "说明"+limitConfig.getDescription();
+        return "index";
     }
 }

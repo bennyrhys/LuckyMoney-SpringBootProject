@@ -412,6 +412,16 @@ java -jar -Dspring.profiles.active=prod  target/luckymoney-0.0.1-SNAPSHOT.jar
 6. git上传
 
 ```
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git branch
+* confmoney
+  master
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git add .
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git commit -m "多环境配置-生产、开发"
+[confmoney b3f8623] 多环境配置-生产、开发
+ 4 files changed, 137 insertions(+), 10 deletions(-)
+ create mode 100644 luckymoney/src/main/resources/application-dev.yml
+ create mode 100644 luckymoney/src/main/resources/application-prod.yml
+bennyrhysdeMacBook-Pro:LuckyMoney-SpringBootProject bennyrhys$ git push origin_lm confmoney
 
 ```
 
@@ -424,4 +434,70 @@ java -jar -Dspring.profiles.active=prod  target/luckymoney-0.0.1-SNAPSHOT.jar
 @Component 	@ConfigurationProperties//多个配置
 
 多环境配置
+
+# Controller的使用
+
+
+
+<img src="luckymoney_note.assets/image-20191229164313530.png" alt="image-20191229164313530" style="zoom:50%;" />
+
+@requestmapping旧版使用，新版@getmapping，但有个别场景还是会使用到它的
+
+## controller+thymeleaf（不推荐，前后端不分离）
+
+将restcontrller改成contrllre（报错），增添thymeleaf模版，返回指定templates-index页面
+
+1. 改成旧版controller
+
+```java
+package com.bennyrhys.luckymoney;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+
+@Controller
+public class HelloController {
+
+//法2；自动注入
+    @Autowired
+    LimitConfig limitConfig;
+
+
+    @GetMapping("/hello")
+    public  String hello(){
+//        return "说明"+limitConfig.getDescription();
+        return "index";
+    }
+}
+```
+
+2. pom.xml,新增thymeleaf模版
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+```
+
+3. 新建thymeleaf模版index页面
+
+4.访问
+
+http://localhost:8081/luckymoney/hello
+
+hello world
+
+5. git上传
+
+```
+
+```
 
